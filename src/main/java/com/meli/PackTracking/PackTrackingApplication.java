@@ -11,21 +11,22 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.meli.PackTracking.component.DogAPIComponent;
 import com.meli.PackTracking.component.NagerDateComponent;
 
 @SpringBootApplication
 public class PackTrackingApplication {
 	
 	@Autowired
-	private final NagerDateComponent nagerDateComponent;
+	private NagerDateComponent nagerDateComponent;
+	
+	@Autowired
+	private DogAPIComponent dogapiComponent;
 
 	public static void main(String[] args) {
 		SpringApplication.run(PackTrackingApplication.class, args);
 	}
 	
-	public PackTrackingApplication(NagerDateComponent nagerDateComponent) {
-		this.nagerDateComponent = nagerDateComponent;
-	}
 
 	 @RestController
 	    class HelloWorldController {
@@ -34,7 +35,7 @@ public class PackTrackingApplication {
 	        public String hello() {
 
 	    		Boolean isHoliday = nagerDateComponent.isHoliday(LocalDate.of(2025, 4, 18), Locale.getDefault().getCountry());
-	            return "Hello, World!, Finalmenteeeeeee" + isHoliday;
+	            return "Hello, World!, Finalmenteeeeeee \n" + isHoliday + "\n " + dogapiComponent.getDogFunFact();
 	        }
 	    }
 	 

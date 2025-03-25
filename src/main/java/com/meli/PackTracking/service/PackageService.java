@@ -18,20 +18,14 @@ import com.meli.PackTracking.repository.SenderRepository;
 public class PackageService {
 	
 	@Autowired
-	private final PackageRepository packageRepo;
+	private PackageRepository packageRepo;
 	
 	@Autowired
-	private final SenderRepository senderRepo;
+	private SenderRepository senderRepo;
 	
 	@Autowired
-	private final NagerDateComponent nagerDateComponent;
+	private NagerDateComponent nagerDateComponent;
 	
-	public PackageService(PackageRepository packageRepo, SenderRepository senderRepo, NagerDateComponent nagerDateComponent) {
-		this.packageRepo = packageRepo;
-		this.senderRepo = senderRepo;
-		this.nagerDateComponent = nagerDateComponent;
-	}
-
 	public PackageDto savePackage(PackageForm form) {
 		LocalDate date = form.getEstimatedDeliveryDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		
