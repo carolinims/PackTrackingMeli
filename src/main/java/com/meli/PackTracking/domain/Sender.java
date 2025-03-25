@@ -2,6 +2,7 @@ package com.meli.PackTracking.domain;
 
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -19,12 +22,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode
 public class Sender {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idSender;
+	
+	@NonNull
 	private String name;
 	
-	@OneToMany(mappedBy = "idPack", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Package> packages;
 }

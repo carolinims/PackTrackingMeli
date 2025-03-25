@@ -10,17 +10,17 @@ import lombok.Getter;
 @Getter
 public class PackageForm {
 	
-	@NotBlank(message = "description - Campo obrigatorio")
+	@NotBlank(message = "description - Required field")
 	private String description;
 	
-	@NotBlank(message = "sender - Campo obrigatorio")
+	@NotBlank(message = "sender - Required field")
 	private String sender;
 	
-	@NotBlank(message = "recipient - Campo obrigatorio")
+	@NotBlank(message = "recipient - Required field")
 	private String recipient;
 	
-	@NotNull(message = "estimatedDeliveryDate - Campo obrigatorio") 
-	@Future(message = "estimatedDeliveryDate precisa ser no futuro")
+	@NotNull(message = "estimatedDeliveryDate - Required field") 
+	@Future(message = "estimatedDeliveryDate - Should be in the future")
 	@Getter
 	private Date estimatedDeliveryDate;
 }
