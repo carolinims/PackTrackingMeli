@@ -18,6 +18,8 @@ import com.meli.PackTracking.domain.Recipient;
 import com.meli.PackTracking.domain.Sender;
 import com.meli.PackTracking.domain.enums.PackageStatus;
 import com.meli.PackTracking.dto.PackageDto;
+import com.meli.PackTracking.exception.InvalidStatusPackageException;
+import com.meli.PackTracking.exception.PackageNotFoundException;
 import com.meli.PackTracking.form.PackageForm;
 import com.meli.PackTracking.repository.PackageRepository;
 import com.meli.PackTracking.repository.RecipientRepository;
@@ -29,29 +31,28 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class PackageService {
-	
+
 	@Autowired
 	private PackageRepository packageRepo;
-	
+
 	@Autowired
 	private SenderRepository senderRepo;
-	
+
 	@Autowired
 	private RecipientRepository recipientRepo;
-	
+
 	@Autowired
 	private NagerDateComponent nagerDateComponent;
-	
+
 	@Autowired
 	private DogAPIComponent dogapiComponent;
-	
+
 	@PersistenceContext
 	private EntityManager entityManager;
-	
-	
+
+	@Transactional
 	public PackageDto savePackage(PackageForm form) {
 
-		
 		Package pack = new Package();
 		pack.setIdPack(createPackId());
 		pack.setDescription(form.getDescription());
@@ -68,41 +69,121 @@ public class PackageService {
 
 		return PackageDto.convertFromDomain(pack);
 	}
-	
+
 	/**
-	 * Buscar um sender pelo name/descricao enviado no endpoint, se encontrar utiliza oq ja existe,
-	 * se nao encontrar cria um sender novo
+	 * Buscar um sender pelo name/descricao enviado no endpoint, se encontrar
+	 * utiliza oq ja existe, se nao encontrar cria um sender novo
+	 * 
 	 * @param name
 	 * @return Sender
 	 */
-	private Sender getOrCreateSender(String name) {		
-		Sender s = senderRepo.findByName(name);	
+	private Sender getOrCreateSender(String name) {
+		Sender s = senderRepo.findByName(name);
 		return s != null ? s : senderRepo.save(new Sender(name));
 	}
-	
+
 	/**
-	 * Buscar um recipient pelo name/descricao enviado no endpoint, se encontrar utiliza oq ja existe,
-	 * se nao encontrar cria um recipient novo
+	 * Buscar um recipient pelo name/descricao enviado no endpoint, se encontrar
+	 * utiliza oq ja existe, se nao encontrar cria um recipient novo
+	 * 
 	 * @param name
 	 * @return Recipient
 	 */
-	private Recipient getOrCreateRecipient(String name) {		
-		Recipient r = recipientRepo.findByName(name);	
+	private Recipient getOrCreateRecipient(String name) {
+		Recipient r = recipientRepo.findByName(name);
 		return r != null ? r : recipientRepo.save(new Recipient(name));
 	}
-	
+
 	private String createPackId() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-        return "pack-" + LocalDateTime.now().format(formatter);
-        		
+		return "pack-" + LocalDateTime.now().format(formatter);
+
 	}
-	
+
 	private Boolean isHoliday(Date date) {
 		LocalDate dateHoliday = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		return nagerDateComponent.isHoliday(dateHoliday, Locale.getDefault().getCountry());
 	}
-	
+
 	private String getDogFunFact() {
 		return dogapiComponent.getDogFunFact();
+	}
+
+	@Transactional
+	public PackageDto updateStatusPack(String packId, PackageStatus status) {
+		Optional<Package> pack = Optional.of(packageRepo.findById(packId)
+				.orElseThrow(() -> new PackageNotFoundException(String.format("Package id [%s] Not found!", packId))));
+
+		switch (pack.get().getStatus()) {
+		case CREATED:
+			if (status.equals(PackageStatus.IN_TRANSIT)) {
+				pack.get().setStatus(status);
+				pack.get().setUpdatedAt(new Date());
+				packageRepo.save(pack.get());
+			} else {
+				throw new InvalidStatusPackageException(
+						String.format("Invalid status [%s] for package [%s]", status, packId));
+			}
+			break;
+
+		case IN_TRANSIT:
+			if (status.equals(PackageStatus.DELIVERED)) {
+				pack.get().setStatus(status);
+				pack.get().setUpdatedAt(new Date());
+				pack.get().setDeliveredAt(new Date());
+				packageRepo.save(pack.get());
+			} else {
+				throw new InvalidStatusPackageException(
+						String.format("Invalid status [%s] for package [%s]", status, packId));
+			}
+			break;
+
+		case CANCELLED:
+			throw new InvalidStatusPackageException(
+					String.format("Invalid status [%s] for package [%s] - package is cancelled", status, packId));
+
+		case DELIVERED:// quando ja foi entregue nao faz sentido mandar mais status
+			throw new InvalidStatusPackageException(
+					String.format("Invalid status [%s] for package [%s] - package already delivered", status, packId));
+		}
+
+		return PackageDto.convertFromDomain(pack.get());
+	}
+
+	@Transactional
+	public PackageDto getPackageDetail(String packId, Boolean isIncludeDetails) {
+		Optional<Package> pack = Optional.of(packageRepo.findById(packId)
+				.orElseThrow(() -> new PackageNotFoundException(String.format("Package id [%s] Not found!", packId))));
+
+		if (isIncludeDetails) {
+			pack.get().getEvents().size();
+		}
+
+		return PackageDto.convertFromDomain(pack.get());
+	}
+
+	@Transactional
+	public PackageDto cancelPackage(String packId) {
+		Optional<Package> pack = Optional.of(packageRepo.findById(packId)
+				.orElseThrow(() -> new PackageNotFoundException(String.format("Package id [%s] Not found!", packId))));
+
+		if (pack.get().getStatus().equals(PackageStatus.CANCELLED)) {
+			throw new InvalidStatusPackageException(
+					String.format("Package [%s] can not be canceled because it has already been cancelled.", packId));
+		} else if (!pack.get().getStatus().equals(PackageStatus.DELIVERED)) {
+			pack.get().setStatus(PackageStatus.CANCELLED);
+			pack.get().setUpdatedAt(new Date());
+			packageRepo.save(pack.get());
+		} else {
+			throw new InvalidStatusPackageException(
+					String.format("Package [%s] can not be canceled because it has already been delivered.", packId));
+		}
+
+		PackageDto packDto = new PackageDto();
+		packDto.setId(pack.get().getIdPack());
+		packDto.setStatus(pack.get().getStatus());
+		packDto.setUpdatedAt(pack.get().getUpdatedAt());
+
+		return packDto;
 	}
 }
