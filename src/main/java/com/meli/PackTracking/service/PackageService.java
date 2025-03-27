@@ -130,24 +130,17 @@ public class PackageService {
 		switch (pack.get().getStatus()) {
 		case CREATED:
 			if (status.equals(PackageStatus.IN_TRANSIT)) {
-				pack.get().setStatus(status);
-				pack.get().setUpdatedAt(new Date());
-				packageRepo.save(pack.get());
+				updatePackage(pack.get(), status, new Date(), null);
 			} else {
-				throw new InvalidStatusPackageException(
-						String.format("Invalid status [%s] for package [%s]", status, packId));
+				throwInvalidStatusException(status, packId);
 			}
 			break;
 
 		case IN_TRANSIT:
 			if (status.equals(PackageStatus.DELIVERED)) {
-				pack.get().setStatus(status);
-				pack.get().setUpdatedAt(new Date());
-				pack.get().setDeliveredAt(new Date());
-				packageRepo.save(pack.get());
+				updatePackage(pack.get(), status, new Date(), new Date());
 			} else {
-				throw new InvalidStatusPackageException(
-						String.format("Invalid status [%s] for package [%s]", status, packId));
+				throwInvalidStatusException(status, packId);
 			}
 			break;
 
@@ -161,6 +154,21 @@ public class PackageService {
 		}
 
 		return PackageDto.convertFromDomain(pack.get());
+	}
+
+	private void updatePackage(Package pack, PackageStatus status, Date updatedAt, Date deliveredAt) {
+		pack.setStatus(status);
+		pack.setUpdatedAt(updatedAt);
+		if (deliveredAt != null) {
+			pack.setDeliveredAt(deliveredAt);
+		}
+		packageRepo.save(pack);
+	}
+	
+	private void throwInvalidStatusException(PackageStatus status, String packId) {
+	    throw new InvalidStatusPackageException(
+	        String.format("Invalid status [%s] for package [%s]", status, packId)
+	    );
 	}
 
 	@Transactional

@@ -8,6 +8,5 @@ import lombok.Getter;
 @Getter
 public class StatusPackForm {
 
-	@NotBlank(message = "status - IN_TRANSIT|CREATED|DELIVERED is Required")
 	private PackageStatus status;
 }

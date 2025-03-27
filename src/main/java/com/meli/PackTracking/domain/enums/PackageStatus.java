@@ -3,6 +3,7 @@ package com.meli.PackTracking.domain.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.meli.PackTracking.exception.InvalidEnumException;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum PackageStatus {
@@ -26,7 +27,8 @@ public enum PackageStatus {
 				return status;
 			}
 		}
-		throw new IllegalArgumentException("Unknown status: " + value);
+		throw new InvalidEnumException(
+				String.format("Unknown status [%s] - Package status must be CREATED | IN_TRANSIT | DELIVERED", value));
 	}
 
 }
