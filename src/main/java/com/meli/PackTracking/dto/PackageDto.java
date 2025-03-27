@@ -1,7 +1,12 @@
 package com.meli.PackTracking.dto;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.meli.PackTracking.domain.Event;
@@ -27,11 +32,35 @@ public class PackageDto {
 	private Date createdAt;
 	private Date updatedAt;
 	private Date deliveredAt;
-	private Set<Event> events;
+	private List<EventDto> events;
 
 	public static PackageDto convertFromDomain(Package pack) {
-		return new PackageDto(pack.getIdPack(), pack.getDescription(), pack.getSender().getName(),
-				pack.getRecipient().getName(), pack.getStatus(), pack.getCreatedAt(), pack.getUpdatedAt(),
-				pack.getDeliveredAt(), pack.getEvents());
+		PackageDto dto = new PackageDto();
+				dto.setId(pack.getId_pack());
+				dto.setDescription(pack.getDescription()); 
+				dto.setSender(pack.getSender().getName()); 
+				dto.setRecipient(pack.getRecipient().getName()); 
+				dto.setStatus(pack.getStatus()); 
+				dto.setCreatedAt(pack.getCreatedAt()); 
+				dto.setUpdatedAt(pack.getUpdatedAt()); 
+				dto.setDeliveredAt(pack.getDeliveredAt());
+				
+		 return dto;
 	}
+	
+	public static PackageDto convertFromDomainWithEvents(Package pack, List<Event> events) {
+		PackageDto dto = convertFromDomain(pack);
+		
+		dto.setEvents(new ArrayList<EventDto>());
+		if(events != null) {
+			dto.events.addAll(events.stream()
+                    .filter(Objects::nonNull) // Filtra eventos nulos
+                    .map(EventDto::convertEventFromDomain)
+                    .toList());
+		}
+		
+		return dto;
+	}
+	
+	
 }

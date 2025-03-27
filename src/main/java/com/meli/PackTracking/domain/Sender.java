@@ -3,6 +3,7 @@ package com.meli.PackTracking.domain;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -26,6 +27,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class Sender {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_sender")
 	private Long idSender;
 	
 	@NonNull

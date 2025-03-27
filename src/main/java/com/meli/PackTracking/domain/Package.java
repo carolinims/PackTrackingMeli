@@ -1,11 +1,9 @@
 package com.meli.PackTracking.domain;
 
 import java.util.Date;
-import java.util.Set;
 
 import com.meli.PackTracking.domain.enums.PackageStatus;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,8 +12,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
@@ -33,7 +29,8 @@ import lombok.Setter;
 public class Package {
 	
 	@Id
-	private String idPack;
+	@Column(name = "id_pack")
+	private String id_pack;
 	private String description;
 	
 	@Column(length = 255)
@@ -55,10 +52,7 @@ public class Package {
 	private PackageStatus Status;
 	
 	private Date deliveredAt;
-	
-	@OneToMany(mappedBy = "idEvent", fetch = FetchType.LAZY)
-	private Set<Event> events;	
-	
+		
 	@PrePersist
     @PreUpdate
     private void truncateFunFact() {

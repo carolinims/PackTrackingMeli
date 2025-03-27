@@ -4,15 +4,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.meli.PackTracking.component.DogAPIComponent;
 import com.meli.PackTracking.component.NagerDateComponent;
+import com.meli.PackTracking.domain.Event;
 import com.meli.PackTracking.domain.Package;
 import com.meli.PackTracking.domain.Recipient;
 import com.meli.PackTracking.domain.Sender;
@@ -21,13 +26,14 @@ import com.meli.PackTracking.dto.PackageDto;
 import com.meli.PackTracking.exception.InvalidStatusPackageException;
 import com.meli.PackTracking.exception.PackageNotFoundException;
 import com.meli.PackTracking.form.PackageForm;
+import com.meli.PackTracking.repository.EventRepository;
 import com.meli.PackTracking.repository.PackageRepository;
 import com.meli.PackTracking.repository.RecipientRepository;
 import com.meli.PackTracking.repository.SenderRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+
 
 @Service
 public class PackageService {
@@ -40,6 +46,9 @@ public class PackageService {
 
 	@Autowired
 	private RecipientRepository recipientRepo;
+	
+	@Autowired
+	private EventRepository eventRepo;
 
 	@Autowired
 	private NagerDateComponent nagerDateComponent;
@@ -54,7 +63,7 @@ public class PackageService {
 	public PackageDto savePackage(PackageForm form) {
 
 		Package pack = new Package();
-		pack.setIdPack(createPackId());
+		pack.setId_pack(createPackId());
 		pack.setDescription(form.getDescription());
 		pack.setFunFact(getDogFunFact());
 		pack.setSender(getOrCreateSender(form.getSender()));
@@ -152,12 +161,15 @@ public class PackageService {
 
 	@Transactional
 	public PackageDto getPackageDetail(String packId, Boolean isIncludeDetails) {
-		Optional<Package> pack = Optional.of(packageRepo.findById(packId)
+		Optional<Package> pack = null;
+		pack = Optional.of(packageRepo.findById(packId)
 				.orElseThrow(() -> new PackageNotFoundException(String.format("Package id [%s] Not found!", packId))));
-
+		
+		Optional<List<Event>> events = null;
 		if (isIncludeDetails) {
-			pack.get().getEvents().size();
-		}
+			events = eventRepo.findByPack(pack.get().getId_pack());
+			return PackageDto.convertFromDomainWithEvents(pack.get(), events.get());
+		} 
 
 		return PackageDto.convertFromDomain(pack.get());
 	}
@@ -180,7 +192,7 @@ public class PackageService {
 		}
 
 		PackageDto packDto = new PackageDto();
-		packDto.setId(pack.get().getIdPack());
+		packDto.setId(pack.get().getId_pack());
 		packDto.setStatus(pack.get().getStatus());
 		packDto.setUpdatedAt(pack.get().getUpdatedAt());
 
