@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.meli.PackTracking.exception.InvalidStatusPackageException;
-import com.meli.PackTracking.exception.PackageNotFoundException;
+import com.meli.PackTracking.exception.ResourceNotFoundException;
 
 @ControllerAdvice
 public class ExceptionsHandlerController {
 	
-	@ExceptionHandler(PackageNotFoundException.class)
-    public ResponseEntity<String> handlePackageNotFound(PackageNotFoundException ex) {
+	@ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handlePackageNotFound(ResourceNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 

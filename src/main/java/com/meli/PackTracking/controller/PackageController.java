@@ -1,5 +1,8 @@
 package com.meli.PackTracking.controller;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +64,13 @@ public class PackageController {
 		PackageDto packDto = packService.cancelPackage(id);
 
 		return ResponseEntity.status(HttpStatus.OK).body(packDto);
+	}
+	
+	@GetMapping("getListPackage")
+	public ResponseEntity<List<PackageDto>> getListPackages(@RequestParam String sender, @RequestParam String recipient) {
+		List<PackageDto> listPackage = packService.listPackages(sender, recipient);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(listPackage);
 	}
 
 }

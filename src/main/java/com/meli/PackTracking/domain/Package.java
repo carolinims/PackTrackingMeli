@@ -14,11 +14,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.persistence.Index;
 
 @Entity
 @Getter
@@ -26,6 +28,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Table(name = "package", indexes = {
+	    @Index(name = "idx_sender", columnList = "id_sender"),
+	    @Index(name = "idx_recipient", columnList = "id_recipient"),
+	    @Index(name = "idx_id_pack", columnList = "id_pack")
+	})
 public class Package {
 	
 	@Id

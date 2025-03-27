@@ -6,9 +6,12 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,7 @@ import com.meli.PackTracking.domain.Sender;
 import com.meli.PackTracking.domain.enums.PackageStatus;
 import com.meli.PackTracking.dto.PackageDto;
 import com.meli.PackTracking.exception.InvalidStatusPackageException;
-import com.meli.PackTracking.exception.PackageNotFoundException;
+import com.meli.PackTracking.exception.ResourceNotFoundException;
 import com.meli.PackTracking.form.PackageForm;
 import com.meli.PackTracking.repository.EventRepository;
 import com.meli.PackTracking.repository.PackageRepository;
@@ -32,6 +35,7 @@ import com.meli.PackTracking.repository.RecipientRepository;
 import com.meli.PackTracking.repository.SenderRepository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 
 
@@ -121,7 +125,7 @@ public class PackageService {
 	@Transactional
 	public PackageDto updateStatusPack(String packId, PackageStatus status) {
 		Optional<Package> pack = Optional.of(packageRepo.findById(packId)
-				.orElseThrow(() -> new PackageNotFoundException(String.format("Package id [%s] Not found!", packId))));
+				.orElseThrow(() -> new ResourceNotFoundException(String.format("Package id [%s] Not found!", packId))));
 
 		switch (pack.get().getStatus()) {
 		case CREATED:
@@ -163,7 +167,7 @@ public class PackageService {
 	public PackageDto getPackageDetail(String packId, Boolean isIncludeDetails) {
 		Optional<Package> pack = null;
 		pack = Optional.of(packageRepo.findById(packId)
-				.orElseThrow(() -> new PackageNotFoundException(String.format("Package id [%s] Not found!", packId))));
+				.orElseThrow(() -> new ResourceNotFoundException(String.format("Package id [%s] Not found!", packId))));
 		
 		Optional<List<Event>> events = null;
 		if (isIncludeDetails) {
@@ -177,7 +181,7 @@ public class PackageService {
 	@Transactional
 	public PackageDto cancelPackage(String packId) {
 		Optional<Package> pack = Optional.of(packageRepo.findById(packId)
-				.orElseThrow(() -> new PackageNotFoundException(String.format("Package id [%s] Not found!", packId))));
+				.orElseThrow(() -> new ResourceNotFoundException(String.format("Package id [%s] Not found!", packId))));
 
 		if (pack.get().getStatus().equals(PackageStatus.CANCELLED)) {
 			throw new InvalidStatusPackageException(
@@ -198,4 +202,25 @@ public class PackageService {
 
 		return packDto;
 	}
+
+	@Transactional
+	public List<PackageDto> listPackages(String sender, String recipient) {
+
+		Recipient r = Optional.ofNullable(recipientRepo.findByName(recipient)).orElseThrow(
+				() -> new ResourceNotFoundException(String.format("Recipient [%s] Not found!", recipient)));
+
+		Sender s = Optional.ofNullable(senderRepo.findByName(sender))
+				.orElseThrow(() -> new ResourceNotFoundException(String.format("Sender [%s] Not found!", sender)));
+
+		Set<Package> listPacks = new LinkedHashSet<Package>();
+
+		packageRepo.getByRecipient(r).ifPresent(listPacks::addAll);
+		packageRepo.getBySender(s).ifPresent(listPacks::addAll);
+
+		return listPacks.stream().map(PackageDto::convertFromDomain).toList();
+	}
+
+	
+	
+	
 }
