@@ -49,11 +49,11 @@
 
 ## Pré-requisitos :warning:
 
-:heavy_check_mark: Java version "21.0.6" 2025-01-21 LTS
+:heavy_check_mark: Java version "21.0.6" 2025-01-21 LTS [download](https://www.oracle.com/br/java/technologies/downloads/)
 
-:heavy_check_mark: Apache Maven 3.9.9 
+:heavy_check_mark: Apache Maven 3.9.9 [download](https://maven.apache.org/docs/3.9.9/release-notes.html)
 
-:heavy_check_mark: 8.0.41 MySQL Community Server - GPL
+:heavy_check_mark: 8.0.41 MySQL Community Server - GPL [download](https://dev.mysql.com/downloads/mysql/8.0.html)
 
 
 ## Como rodar a aplicação :arrow_forward:
@@ -64,18 +64,28 @@
 
 :heavy_check_mark: Clonar o projeto do git.
 
+(Obs: Por padrão a aplicação vai subir na porta 8080, caso seja necessario alterar será necessario indicar no application.properties a configuração server.port=8081)
+
 :heavy_check_mark: Após via cmd/terminal/prompt vá ao diretório raiz do projeto (nível do arquivo pom.xml) e execute o comando maven:
 ```bash
  mvn clean package
 ```
-No diretório raiz será criada a pasta target, nela é gerado o arquivo PackTracking-1.0.jar, este é o executável. **(OBS: certifique-se de não ter aberto o diretório "target" em nenhum terminal ou janela, esse diretório sempre é apagado no clean, então se ele estiver aberto o S.O. pode negar permissão e falhar o comando "mvn clean package")
+No diretório raiz será criada a pasta target, nela é gerado o arquivo PackTracking-1.0.jar, este é o executável. 
+
+(Obs: certifique-se de não ter aberto o diretório "target" em nenhum terminal ou janela, esse diretório sempre é apagado no clean, então se ele estiver aberto o S.O. pode negar permissão e falhar o comando "mvn clean package")
 
 :heavy_check_mark: Para executar o PackTracking-1.0.jar rodar o comando via cmd/terminal/prompt
 ```bash
 java -jar PackTracking-1.0.jar
 ```
 
-O Programa vai iniciar e deve exibir o cmd da seguinte maneira:
+O Programa vai iniciar e deve exibir o cmd indicando que a aplicaçãosubiu com sucesso da seguinte forma:
+
+![mer](src/main/resources/images/inicializado.png)
+
+A aplicaçõe estara inicializada e pronta para receber solicitações.
+
+(Obs: O Arquivos de log packTracking.log será gerado no mesmo nivel de diretorio de execução do jar dentro do diretorio /logs)
 
 ## EndPoints :gear:
 
@@ -135,7 +145,7 @@ Neste enPoint o uso de If-None-Match no header é obrigatorio (pensando em evita
 
 :heavy_check_mark: Incluir testes automatizados de carga com JMeter.
 
-:heavy_check_mark: Atualmente é possivel configurar o intervalo de tempo e a quantidade de dados a serem expurgados pelo servico de expurgo de dados, porem essa configuracao é via properties, o que acaba limitando um pouco o uso dessa configuração, então seria interessante essa configuração ficar fora do executavel da aplicação, lendo de um arquivo externo ou do proprio banco de dados.
+:heavy_check_mark: Atualmente é possivel configurar o intervalo de tempo e a quantidade de dados a serem expurgados pelo servico de expurgo de dados, porem essa configuracao é via application.properties, o que acaba limitando um pouco o uso dessa configuração, então seria interessante essa configuração ficar fora do executavel da aplicação, lendo de um arquivo externo ou do proprio banco de dados.
 
 
-Copyright :copyright: Ano - Titulo do Projeto
+Copyright :copyright: 2025 - PackTracking
