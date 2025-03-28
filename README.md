@@ -11,9 +11,11 @@
 
 :small_blue_diamond: [Escalabilidade e otimização](#escalabilidade-e-otimização)
 
-:small_blue_diamond: [Pré-requisitos](#pré-requisitos)
+:small_blue_diamond: [Pré-requisitos](#pré-requisitos-warning)
 
 :small_blue_diamond: [Como rodar a aplicação](#como-rodar-a-aplicação-arrow_forward)
+
+:small_blue_diamond: [Possiveis melhorias](#possiveis-melhorias-hammer_and_wrench)
 
 ## Descrição do projeto 
 
@@ -53,6 +55,9 @@
 ## Como rodar a aplicação :arrow_forward:
 
 No terminal, clone o projeto: 
+
+## Possiveis melhorias :hammer_and_wrench:
+
 
 
 ## Como rodar os testes
