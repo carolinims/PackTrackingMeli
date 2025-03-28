@@ -1,3 +1,4 @@
+![mer](src/main/resources/images/PackTrackIco.png) 
 <h1>Pack Tracking MELI</h1> 
 
 > Status do Projeto: :heavy_check_mark: Concluído
@@ -8,7 +9,7 @@
 
 :small_blue_diamond: [Modelagem do banco de dados](#modelagem-do-banco-de-dados)
 
-:small_blue_diamond: [Deploy da Aplicação](#deploy-da-aplicação-dash)
+:small_blue_diamond: [Escalabilidade e otimização](#escalabilidade-e-otimização)
 
 :small_blue_diamond: [Pré-requisitos](#pré-requisitos)
 
@@ -28,22 +29,26 @@
    Diagrama MER:
 </p>
 
-![mer](images/exemplo.png)
+![mer](src/main/resources/images/modelagemBD.png)
 
-:heavy_check_mark: Funcionalidade 1  
+## Escalabilidade e otimização
 
-:heavy_check_mark: Funcionalidade 2  
+:heavy_check_mark: Utilizado @Async do Spring que permite que operações demoradas (I/O, chamadas externas, processamento pesado) rodem em threads separadas, liberando a thread principal para continuar processando outras requisições no endpoint de envio de eventos de rastreamento por conta da alta demanda que ele ira receber.  
 
-:heavy_check_mark: Funcionalidade 3  
+:heavy_check_mark: Utiliza eTags nos cabeçalhos Http de alguns endpoints para evitar geração repetida da mesma página, melhorando a performance e reduzindo requisições ao backend.  
 
-:heavy_check_mark: Funcionalidade 4  
+:heavy_check_mark: Utiliza HikariCP para gerenciar conexões com o banco de dados de forma eficiente:  
 
-## Layout ou Deploy da Aplicação :dash:
+:heavy_check_mark: Utiliza paginacao no serviço agendado de expurgo de dados para não onerar demais o processamento 
 
+:heavy_check_mark: Utiliza SLF4J para gestão de logs 
 
-## Pré-requisitos
+## Pré-requisitos :warning:
 
-:warning: [Node](https://nodejs.org/en/download/)
+:heavy_check_mark: Java version "21.0.6" 2025-01-21 LTS
+
+:heavy_check_mark: Apache Maven 3.9.9 
+
 
 ## Como rodar a aplicação :arrow_forward:
 
