@@ -22,6 +22,14 @@
 
 ## Modelagem do banco de dados
 
+<p align="justify">
+   Versão do MySQL: Server version: 8.0.41 MySQL Community Server - GPL
+
+   Diagrama MER:
+</p>
+
+![mer](images/exemplo.png)
+
 :heavy_check_mark: Funcionalidade 1  
 
 :heavy_check_mark: Funcionalidade 2  
