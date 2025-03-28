@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,7 @@ import com.meli.PackTracking.domain.Sender;
 import com.meli.PackTracking.domain.enums.PackageStatus;
 import com.meli.PackTracking.dto.PackageDto;
 import com.meli.PackTracking.exception.InvalidStatusPackageException;
-import com.meli.PackTracking.exception.ResourceNotFoundException;
+import com.meli.PackTracking.exception.IDNotFoundException;
 import com.meli.PackTracking.form.PackageForm;
 import com.meli.PackTracking.repository.EventRepository;
 import com.meli.PackTracking.repository.PackageRepository;
@@ -62,6 +64,8 @@ public class PackageService {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	private static final Logger logger = LoggerFactory.getLogger(PackageService.class);
 
 	@Transactional
 	public PackageDto savePackage(PackageForm form) {
@@ -125,7 +129,7 @@ public class PackageService {
 	@Transactional
 	public PackageDto updateStatusPack(String packId, PackageStatus status) {
 		Optional<Package> pack = Optional.of(packageRepo.findById(packId)
-				.orElseThrow(() -> new ResourceNotFoundException(String.format("Package id [%s] Not found!", packId))));
+				.orElseThrow(() -> new IDNotFoundException(String.format("Package id [%s] Not found!", packId))));
 
 		switch (pack.get().getStatus()) {
 		case CREATED:
@@ -175,7 +179,7 @@ public class PackageService {
 	public PackageDto getPackageDetail(String packId, Boolean isIncludeDetails) {
 		Optional<Package> pack = null;
 		pack = Optional.of(packageRepo.findById(packId)
-				.orElseThrow(() -> new ResourceNotFoundException(String.format("Package id [%s] Not found!", packId))));
+				.orElseThrow(() -> new IDNotFoundException(String.format("Package id [%s] Not found!", packId))));
 		
 		Optional<List<Event>> events = null;
 		if (isIncludeDetails) {
@@ -189,7 +193,7 @@ public class PackageService {
 	@Transactional
 	public PackageDto cancelPackage(String packId) {
 		Optional<Package> pack = Optional.of(packageRepo.findById(packId)
-				.orElseThrow(() -> new ResourceNotFoundException(String.format("Package id [%s] Not found!", packId))));
+				.orElseThrow(() -> new IDNotFoundException(String.format("Package id [%s] Not found!", packId))));
 
 		if (pack.get().getStatus().equals(PackageStatus.CANCELLED)) {
 			throw new InvalidStatusPackageException(
@@ -215,10 +219,10 @@ public class PackageService {
 	public List<PackageDto> listPackages(String sender, String recipient) {
 
 		Recipient r = Optional.ofNullable(recipientRepo.findByName(recipient)).orElseThrow(
-				() -> new ResourceNotFoundException(String.format("Recipient [%s] Not found!", recipient)));
+				() -> new IDNotFoundException(String.format("Recipient [%s] Not found!", recipient)));
 
 		Sender s = Optional.ofNullable(senderRepo.findByName(sender))
-				.orElseThrow(() -> new ResourceNotFoundException(String.format("Sender [%s] Not found!", sender)));
+				.orElseThrow(() -> new IDNotFoundException(String.format("Sender [%s] Not found!", sender)));
 
 		Set<Package> listPacks = new LinkedHashSet<Package>();
 

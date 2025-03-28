@@ -1,10 +1,10 @@
 package com.meli.PackTracking.exception;
 
-public class ResourceNotFoundException extends RuntimeException{
+public class IDNotFoundException extends RuntimeException{
 
 	private static final long serialVersionUID = 1L;
 
-	public ResourceNotFoundException(String message) {
+	public IDNotFoundException(String message) {
         super(message);
     }
 

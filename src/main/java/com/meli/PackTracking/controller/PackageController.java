@@ -50,7 +50,7 @@ public class PackageController {
 	}
 
 	@PatchMapping("updatePackStatus/{id}")
-	public ResponseEntity<PackageDto> updateStatus(@PathVariable String id, @RequestBody StatusPackForm statusForm,
+	public ResponseEntity<PackageDto> updateStatus(@Validated @PathVariable String id, @RequestBody StatusPackForm statusForm,
 			@RequestHeader(value = HttpHeaders.IF_NONE_MATCH, required = false) String ifNoneMatch) {
 		
 		String eTag = String.valueOf(Objects.hash(id, statusForm.getStatus()));
