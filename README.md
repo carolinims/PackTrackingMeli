@@ -43,7 +43,7 @@
 
 :heavy_check_mark: Utiliza HikariCP para gerenciar conexões com o banco de dados de forma eficiente:  
 
-:heavy_check_mark: Utiliza paginacao configuravel no serviço agendado de expurgo de dados para não onerar demais o processamento 
+:heavy_check_mark: Utiliza paginacao configuravel no serviço agendado com @Scheduled de expurgo de dados para não onerar demais o processamento 
 
 :heavy_check_mark: Utiliza SLF4J para gestão de logs 
 
@@ -65,6 +65,8 @@
 :heavy_check_mark: Clonar o projeto do git.
 
 (Obs: Por padrão a aplicação vai subir na porta 8080, caso seja necessario alterar será necessario indicar no application.properties a configuração server.port=8081)
+
+(Obs: O serviço de expurgo de dados para pacotes que foram cancelados está configurado via application.properties para rodar a cada 2 horas, caso sejar altere a propriedade scheduler.cancelled.packages.cron.expression antes de compilar o projeto).
 
 :heavy_check_mark: Após via cmd/terminal/prompt vá ao diretório raiz do projeto (nível do arquivo pom.xml) e execute o comando maven:
 ```bash
