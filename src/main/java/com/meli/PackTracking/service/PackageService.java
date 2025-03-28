@@ -4,16 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +25,8 @@ import com.meli.PackTracking.domain.Recipient;
 import com.meli.PackTracking.domain.Sender;
 import com.meli.PackTracking.domain.enums.PackageStatus;
 import com.meli.PackTracking.dto.PackageDto;
-import com.meli.PackTracking.exception.InvalidStatusPackageException;
 import com.meli.PackTracking.exception.IDNotFoundException;
+import com.meli.PackTracking.exception.InvalidStatusPackageException;
 import com.meli.PackTracking.form.PackageForm;
 import com.meli.PackTracking.repository.EventRepository;
 import com.meli.PackTracking.repository.PackageRepository;
@@ -37,7 +34,6 @@ import com.meli.PackTracking.repository.RecipientRepository;
 import com.meli.PackTracking.repository.SenderRepository;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 
 

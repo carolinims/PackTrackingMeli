@@ -2,7 +2,6 @@ package com.meli.PackTracking.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +16,6 @@ import com.meli.PackTracking.domain.enums.PackageStatus;
 import com.meli.PackTracking.repository.EventRepository;
 import com.meli.PackTracking.repository.PackageRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 
 @Service

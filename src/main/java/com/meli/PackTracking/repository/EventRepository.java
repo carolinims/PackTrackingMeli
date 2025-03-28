@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.meli.PackTracking.domain.Event;
-import com.meli.PackTracking.domain.Package;
 
 public interface EventRepository extends JpaRepository<Event, Long>{
 	
